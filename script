@@ -19,7 +19,6 @@ metadata:
 data:
   name: def
 `;
-a = kubectl create ns dev;
 x = kubectl apply -n dev a;
 k = "kind";
 z = "metadata.name";
