@@ -1,0 +1,39 @@
+a = `
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: test-cm
+  namespace: dev
+  labels:
+    app.kubernetes.io/instance: my-app
+data:
+  name: abc
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: test-cm2
+  namespace: dev
+  labels:
+    app.kubernetes.io/instance: my-app
+data:
+  name: def
+`;
+a = kubectl create ns dev;
+x = kubectl apply -n dev a;
+k = "kind";
+z = "metadata.name";
+o1 = yamlSelect(a, k, 0) + "/" + yamlSelect(a, z, 0);
+k2 = yamlSelect(a, k, 1);
+n2 = yamlSelect(a, z, 1);
+o2 = k2 + "/" + n2;
+pa = kubectl patch -n dev k2 n2 --type "application/merge-patch+json" -p '{"data":{"age":"36"}}';
+fo = kubectl get -n dev o1 o2;
+selector = 'items.#(metadata.name="'+n2+'").data.age';
+age = jsonSelect(fo, selector);
+d = `
+#!/bin/bash
+echo -n ` + age;
+e = shellScript d;
+log("completed");
+#f = kubectl delete -n dev o1 o2;
